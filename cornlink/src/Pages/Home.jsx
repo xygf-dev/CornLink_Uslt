@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Farmer.jsx";
 
 const features = [
   { icon: "🌱", title: "Harvest Forecasting", text: "Keep track of planting schedules and expected harvest dates to build a clearer picture of future corn availability." },
