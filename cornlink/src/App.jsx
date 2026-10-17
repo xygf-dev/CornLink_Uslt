@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-import { Routes, Route } from "react-router-dom";
-import Home from "./Pages/Home"
-import Farmer from "./Pages/Farmer";
-// import Dashboard from "./pages/Dashboard";
-// import Farmers from "./pages/Farmers";
-=======
 import { Routes, Route, Link } from "react-router-dom";
 import Home from "./Pages/Home";
+import Farmer from "./Pages/Farmer";
 import PlantLayout from "./Pages/Plant/PlantLayout";
 import Overview from "./Pages/Plant/Overview";
 import Demand from "./Pages/Plant/Demand";
@@ -23,16 +17,12 @@ function ComingSoon({ name }) {
     </div>
   );
 }
->>>>>>> 07270506fa3e125c76bb7cc71b2d71fa893b9ef6
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-<<<<<<< HEAD
       <Route path="/farmer" element={<Farmer />} />
-=======
-
       <Route path="/plant" element={<PlantLayout />}>
         <Route index element={<Overview />} />
         <Route path="demand" element={<Demand />} />
@@ -40,10 +30,7 @@ export default function App() {
         <Route path="deliveries" element={<Deliveries />} />
         <Route path="suppliers" element={<Suppliers />} />
       </Route>
-
-      <Route path="/farmer" element={<ComingSoon name="Farmer" />} />
       <Route path="/cooperative" element={<ComingSoon name="Cooperative" />} />
->>>>>>> 07270506fa3e125c76bb7cc71b2d71fa893b9ef6
     </Routes>
   );
 }

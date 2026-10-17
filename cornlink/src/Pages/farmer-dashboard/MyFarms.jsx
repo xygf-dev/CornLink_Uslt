@@ -2,387 +2,296 @@ import React, { useEffect, useMemo, useState } from "react";
 
 const STORAGE_KEY = "cornlink-farmer-farms";
 
-const emptyFarm = {
+const EMPTY_FARM = {
   name: "",
   municipality: "",
   area: "",
-  variety: "Yellow corn",
+  variety: "",
   plantingDate: "",
   harvestDate: "",
   status: "Growing",
 };
 
-const styles = {
-  page: { color: "#183b2b", display: "grid", gap: 20 },
-  header: {
-    display: "flex", justifyContent: "space-between", alignItems: "flex-start",
-    gap: 16, flexWrap: "wrap",
-  },
-  kicker: {
-    color: "#668272", fontSize: 11, fontWeight: 800, letterSpacing: "1.5px",
-    marginBottom: 8,
-  },
-  title: { margin: 0, fontSize: 28, color: "#173d2c" },
-  subtitle: { margin: "8px 0 0", color: "#718078", lineHeight: 1.6 },
-  button: {
-    border: 0, borderRadius: 8, padding: "11px 16px", background: "#194b35",
-    color: "#fff", fontWeight: 700, cursor: "pointer",
-  },
-  secondaryButton: {
-    border: "1px solid #d9e3dc", borderRadius: 7, padding: "8px 11px",
-    background: "#fff", color: "#24513a", fontWeight: 650, cursor: "pointer",
-  },
-  dangerButton: {
-    border: "1px solid #f0d5d1", borderRadius: 7, padding: "8px 11px",
-    background: "#fff", color: "#a43b30", fontWeight: 650, cursor: "pointer",
-  },
-  statGrid: {
-    display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-    gap: 14,
-  },
-  stat: {
-    background: "#fff", border: "1px solid #e4eae5", borderRadius: 12,
-    padding: 18, boxShadow: "0 3px 12px rgba(25, 59, 42, 0.03)",
-  },
-  statLabel: { color: "#758278", fontSize: 12 },
-  statValue: { color: "#183b2b", fontSize: 25, fontWeight: 800, marginTop: 8 },
-  panel: {
-    background: "#fff", border: "1px solid #e2e9e3", borderRadius: 12,
-    padding: 20, boxShadow: "0 3px 12px rgba(25, 59, 42, 0.03)",
-  },
-  toolbar: {
-    display: "flex", gap: 12, justifyContent: "space-between",
-    alignItems: "center", flexWrap: "wrap", marginBottom: 16,
-  },
-  input: {
-    width: "100%", boxSizing: "border-box", border: "1px solid #d7e1d9",
-    borderRadius: 7, padding: "10px 11px", color: "#203d2e",
-    background: "#fff", font: "inherit",
-  },
-  label: { display: "block", color: "#46594d", fontSize: 12, fontWeight: 700, marginBottom: 6 },
-  tableWrap: { overflowX: "auto", width: "100%" },
-  table: { width: "100%", borderCollapse: "collapse", minWidth: 760, textAlign: "left" },
-  th: {
-    background: "#f5f8f5", color: "#718078", fontSize: 11, letterSpacing: ".6px",
-    textTransform: "uppercase", padding: "12px 10px", borderBottom: "1px solid #e5ebe6",
-  },
-  td: { padding: "14px 10px", borderBottom: "1px solid #edf1ed", fontSize: 13, color: "#42574a" },
-  badge: {
-    display: "inline-block", padding: "5px 9px", borderRadius: 20,
-    background: "#e8f4eb", color: "#247243", fontSize: 11, fontWeight: 750,
-  },
-  overlay: {
-    position: "fixed", inset: 0, background: "rgba(13, 32, 22, .48)",
-    display: "flex", alignItems: "center", justifyContent: "center",
-    padding: 16, zIndex: 9999,
-  },
-  modal: {
-    background: "#fff", borderRadius: 14, padding: 24, width: "min(640px, 100%)",
-    maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,.2)",
-  },
-  formGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 },
-  empty: { textAlign: "center", padding: "38px 16px", color: "#718078" },
-};
+const styles = `
+  .mf-page {
+    --mf-green: #1d603a;
+    --mf-dark: #173d2b;
+    --mf-soft: #edf6e9;
+    --mf-border: #e0e9dd;
+    --mf-muted: #758579;
+    color: #203b2a;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .mf-page * { box-sizing: border-box; }
+  .mf-page button, .mf-page input, .mf-page select { font: inherit; }
+  .mf-heading {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 20px; margin-bottom: 25px;
+  }
+  .mf-kicker {
+    color: #4f8a5a; font-size: 10px; letter-spacing: 1.5px;
+    font-weight: 800; margin: 0 0 9px;
+  }
+  .mf-title { font-size: clamp(25px, 3vw, 33px); line-height: 1.2; margin: 0 0 8px; font-weight: 800; letter-spacing: -.8px; }
+  .mf-subtitle { color: var(--mf-muted); font-size: 13px; line-height: 1.6; margin: 0; }
+  .mf-primary, .mf-secondary, .mf-danger {
+    border-radius: 9px; padding: 11px 15px; font-size: 12px; font-weight: 750;
+    cursor: pointer; transition: background .15s, border-color .15s, transform .15s;
+  }
+  .mf-primary { border: 1px solid var(--mf-green); color: #fff; background: var(--mf-green); }
+  .mf-primary:hover { background: #154a2c; transform: translateY(-1px); }
+  .mf-secondary { border: 1px solid #d9e5d6; color: #31583b; background: #fff; }
+  .mf-secondary:hover { background: #f3f8f0; border-color: #b8d0b4; }
+  .mf-danger { border: 1px solid #f0d8d4; color: #a34338; background: #fff; }
+  .mf-danger:hover { background: #fff4f2; }
+  .mf-overview {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px; margin-bottom: 22px;
+  }
+  .mf-stat {
+    background: #fff; border: 1px solid var(--mf-border); border-radius: 13px;
+    padding: 16px 18px; min-height: 94px;
+  }
+  .mf-stat-label { color: var(--mf-muted); font-size: 11px; display: block; margin-bottom: 9px; }
+  .mf-stat-value { font-size: 25px; line-height: 1; font-weight: 800; letter-spacing: -.5px; }
+  .mf-toolbar {
+    display: flex; justify-content: space-between; align-items: center; gap: 14px;
+    padding: 14px; background: #fff; border: 1px solid var(--mf-border);
+    border-radius: 13px; margin-bottom: 17px;
+  }
+  .mf-search-wrap { position: relative; flex: 1; max-width: 440px; }
+  .mf-search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #7f9082; pointer-events: none; }
+  .mf-input {
+    width: 100%; min-width: 0; border: 1px solid #dce6d9; border-radius: 9px;
+    padding: 11px 12px; color: #23432e; background: #fff; outline: none; font-size: 12px;
+  }
+  .mf-search { padding-left: 36px; }
+  .mf-input:focus { border-color: #73a779; box-shadow: 0 0 0 3px #e5f2e1; }
+  .mf-count { color: var(--mf-muted); font-size: 11px; white-space: nowrap; }
+  .mf-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .mf-card {
+    min-width: 0; background: #fff; border: 1px solid var(--mf-border);
+    border-radius: 15px; overflow: hidden; box-shadow: 0 3px 12px rgba(29, 70, 38, .035);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .mf-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(29, 70, 38, .08); }
+  .mf-card-banner {
+    min-height: 83px; padding: 15px 17px; display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 10px; background: linear-gradient(115deg, #dcefd4, #f0f7eb);
+    border-bottom: 1px solid #e5efe1;
+  }
+  .mf-corn-icon { width: 42px; height: 42px; display: grid; place-items: center; background: #fff9; border-radius: 12px; font-size: 23px; }
+  .mf-badge { display: inline-flex; align-items: center; justify-content: center; border-radius: 30px; padding: 6px 9px; font-size: 10px; font-weight: 800; background: #e5f4e1; color: #347044; }
+  .mf-badge.ready { background: #fff1d5; color: #8b6418; }
+  .mf-badge.harvested { background: #e8edf9; color: #455c9b; }
+  .mf-badge.preparing { background: #f0e9fc; color: #7753a4; }
+  .mf-card-content { padding: 17px 17px 14px; }
+  .mf-farm-name { font-size: 16px; line-height: 1.35; font-weight: 800; margin: 0 0 6px; overflow-wrap: anywhere; }
+  .mf-location { color: var(--mf-muted); font-size: 11px; margin-bottom: 16px; }
+  .mf-details { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 10px; padding-top: 14px; border-top: 1px solid #edf1eb; }
+  .mf-detail-label { display: block; color: #8b998d; font-size: 9px; font-weight: 800; letter-spacing: .5px; margin-bottom: 5px; }
+  .mf-detail-value { display: block; color: #31553a; font-size: 11px; font-weight: 700; overflow-wrap: anywhere; }
+  .mf-card-actions { display: flex; gap: 8px; padding: 0 17px 17px; }
+  .mf-card-actions button { flex: 1; padding: 9px 10px; }
+  .mf-empty {
+    background: #fff; border: 1px dashed #c9dcc5; border-radius: 15px;
+    padding: 42px 20px; text-align: center;
+  }
+  .mf-empty-icon { font-size: 34px; margin-bottom: 11px; }
+  .mf-empty h2 { margin: 0 0 7px; font-size: 16px; font-weight: 800; }
+  .mf-empty p { color: var(--mf-muted); font-size: 12px; margin: 0 auto 17px; line-height: 1.6; max-width: 380px; }
+  .mf-form-panel { background: #fff; border: 1px solid var(--mf-border); border-radius: 15px; padding: 21px; margin-bottom: 20px; }
+  .mf-form-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 17px; }
+  .mf-form-header h2 { font-size: 17px; margin: 0; font-weight: 800; }
+  .mf-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .mf-field label { display: block; font-size: 11px; font-weight: 750; color: #4d6753; margin-bottom: 7px; }
+  .mf-form-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 17px; }
+  @media (max-width: 1100px) { .mf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 700px) {
+    .mf-heading { align-items: flex-start; flex-direction: column; }
+    .mf-overview { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .mf-stat { padding: 12px; }
+    .mf-stat-value { font-size: 21px; }
+    .mf-grid { grid-template-columns: 1fr; }
+    .mf-toolbar { align-items: stretch; flex-direction: column; }
+    .mf-search-wrap { max-width: none; }
+  }
+  @media (max-width: 430px) {
+    .mf-overview { grid-template-columns: 1fr; }
+    .mf-form-grid { grid-template-columns: 1fr; }
+  }
+`;
 
-function readSavedFarms() {
+function readFarms() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : [];
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    return Array.isArray(saved) ? saved : [];
   } catch {
     return [];
   }
 }
 
+function formatDate(value) {
+  if (!value) return "Not set";
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
+function statusClass(status) {
+  if (status === "Ready to harvest") return "ready";
+  if (status === "Harvested") return "harvested";
+  if (status === "Preparing land") return "preparing";
+  return "";
+}
+
 export default function MyFarms() {
-  const [farms, setFarms] = useState(readSavedFarms);
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
-  const [modalOpen, setModalOpen] = useState(false);
+  const [farms, setFarms] = useState(readFarms);
+  const [query, setQuery] = useState("");
+  const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [form, setForm] = useState(emptyFarm);
-  const [formError, setFormError] = useState("");
-  const [notice, setNotice] = useState("");
+  const [form, setForm] = useState(EMPTY_FARM);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(farms));
-    } catch {
-      setNotice("Could not save records in this browser.");
-   }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(farms));
   }, [farms]);
 
   const filteredFarms = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    return farms.filter((farm) => {
-      const matchesSearch =
-        farm.name.toLowerCase().includes(query) ||
-        farm.municipality.toLowerCase().includes(query) ||
-        farm.variety.toLowerCase().includes(query);
-      const matchesStatus = statusFilter === "All" || farm.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
-  }, [farms, search, statusFilter]);
+    const term = query.trim().toLowerCase();
+    if (!term) return farms;
+    return farms.filter((farm) =>
+      [farm.name, farm.municipality, farm.variety, farm.status]
+        .some((value) => String(value || "").toLowerCase().includes(term))
+    );
+  }, [farms, query]);
 
   const totalArea = farms.reduce((sum, farm) => sum + (Number(farm.area) || 0), 0);
+  const growingCount = farms.filter((farm) => farm.status === "Growing").length;
+  const readyCount = farms.filter((farm) => farm.status === "Ready to harvest").length;
 
   function openAddForm() {
     setEditingId(null);
-    setForm({ ...emptyFarm });
-    setFormError("");
-    setModalOpen(true);
+    setForm(EMPTY_FARM);
+    setShowForm(true);
   }
 
   function openEditForm(farm) {
     setEditingId(farm.id);
-    setForm({
-      name: farm.name,
-      municipality: farm.municipality,
-      area: farm.area,
-      variety: farm.variety,
-      plantingDate: farm.plantingDate,
-      harvestDate: farm.harvestDate,
-      status: farm.status,
-    });
-    setFormError("");
-    setModalOpen(true);
+    setForm({ ...EMPTY_FARM, ...farm });
+    setShowForm(true);
   }
 
-  function updateField(event) {
-    const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
-  }
-
-  function handleSubmit(event) {
+  function saveFarm(event) {
     event.preventDefault();
-    setFormError("");
+    if (!form.name.trim()) return;
 
-    if (!form.name.trim() || !form.municipality.trim() || !form.area ||
-        !form.plantingDate || !form.harvestDate) {
-      setFormError("Please complete all required fields.");
-      return;
-    }
-    if (Number(form.area) <= 0) {
-      setFormError("Farm area must be greater than zero.");
-      return;
-    }
-    if (form.harvestDate < form.plantingDate) {
-      setFormError("Expected harvest date must be on or after the planting date.");
-      return;
-    }
+    const record = {
+      ...form,
+      id: editingId ?? Date.now().toString(),
+      name: form.name.trim(),
+      municipality: form.municipality.trim(),
+      variety: form.variety.trim(),
+      area: form.area === "" ? "" : Number(form.area),
+    };
 
-    if (editingId) {
-      setFarms((current) => current.map((farm) =>
-        farm.id === editingId ? { ...farm, ...form, area: Number(form.area) } : farm
-      ));
-      setNotice("Farm record updated.");
-    } else {
-      const newFarm = {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        ...form,
-        name: form.name.trim(),
-        municipality: form.municipality.trim(),
-        area: Number(form.area),
-        createdAt: new Date().toISOString(),
-      };
-      setFarms((current) => [newFarm, ...current]);
-      setNotice("Farm registered successfully.");
-    }
-    setModalOpen(false);
+    setFarms((current) =>
+      editingId
+        ? current.map((farm) => farm.id === editingId ? record : farm)
+        : [record, ...current]
+    );
+    setShowForm(false);
+    setEditingId(null);
+    setForm(EMPTY_FARM);
   }
 
-  function deleteFarm(farm) {
-    const confirmed = window.confirm(`Delete "${farm.name}"? This cannot be undone.`);
-    if (!confirmed) return;
-    setFarms((current) => current.filter((item) => item.id !== farm.id));
-    setNotice("Farm record deleted.");
+  function deleteFarm(id) {
+    if (window.confirm("Are you sure you want to delete this farm record?")) {
+      setFarms((current) => current.filter((farm) => farm.id !== id));
+    }
   }
 
   return (
-    <div style={styles.page}>
-      <header style={styles.header}>
+    <div className="mf-page">
+      <style>{styles}</style>
+
+      <header className="mf-heading">
         <div>
-          <div style={styles.kicker}>FARMER WORKSPACE</div>
-          <h1 style={styles.title}>My Farm Records</h1>
-          <p style={styles.subtitle}>
-            Register your farms and keep your planting and harvest information organized.
-          </p>
+          <p className="mf-kicker">YOUR LAND, YOUR RECORDS</p>
+          <h1 className="mf-title">My Farm Records</h1>
+          <p className="mf-subtitle">Manage your farm locations, crop varieties, and planting schedules in one place.</p>
         </div>
-        <button type="button" style={styles.button} onClick={openAddForm}>
-          ＋ Register a farm
-        </button>
+        <button className="mf-primary" type="button" onClick={openAddForm}>＋ Add farm</button>
       </header>
 
-      <section style={styles.statGrid} aria-label="Farm record summary">
-        <article style={styles.stat}>
-          <div style={styles.statLabel}>Registered farms</div>
-          <div style={styles.statValue}>{farms.length}</div>
-        </article>
-        <article style={styles.stat}></article>
-                <article style={styles.stat}>
-          <div style={styles.statLabel}>Total farm area</div>
-          <div style={styles.statValue}>{totalArea.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span style={{ fontSize: 13 }}>ha</span></div>
-        </article>
-        <article style={styles.stat}>
-          <div style={styles.statLabel}>Growing crops</div>
-          <div style={styles.statValue}>{farms.filter((farm) => farm.status === "Growing").length}</div>
-        </article>
-      </section>
+      <div className="mf-overview">
+        <div className="mf-stat"><span className="mf-stat-label">Registered farms</span><strong className="mf-stat-value">{farms.length}</strong></div>
+        <div className="mf-stat"><span className="mf-stat-label">Total farm area</span><strong className="mf-stat-value">{totalArea.toLocaleString()} <span style={{ fontSize: 12, fontWeight: 650 }}>ha</span></strong></div>
+        <div className="mf-stat"><span className="mf-stat-label">Ready to harvest</span><strong className="mf-stat-value">{readyCount}</strong></div>
+      </div>
 
-      <section style={styles.panel}>
-        <div style={styles.toolbar}>
-          <div>
-            <h2 style={{ margin: 0, fontSize: 18 }}>Registered farms</h2>
-            <p style={{ margin: "5px 0 0", color: "#7b877f", fontSize: 12 }}>
-              {filteredFarms.length} of {farms.length} farm record(s)
-            </p>
+      {showForm && (
+        <form className="mf-form-panel" onSubmit={saveFarm}>
+          <div className="mf-form-header">
+            <div><p className="mf-kicker">{editingId ? "UPDATE FARM DETAILS" : "NEW FARM RECORD"}</p><h2>{editingId ? "Edit farm" : "Add a farm"}</h2></div>
+            <button className="mf-secondary" type="button" onClick={() => setShowForm(false)}>Close</button>
           </div>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", minWidth: 260 }}>
-            <input
-              aria-label="Search farms"
-              style={{ ...styles.input, width: 220 }}
-              type="search"
-              placeholder="Search name, location, variety..."
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
-            <select
-              aria-label="Filter by crop status"
-              style={{ ...styles.input, width: 150 }}
-              value={statusFilter}
-              onChange={(event) => setStatusFilter(event.target.value)}
-            >
-              <option>All</option>
-              <option>Planned</option>
-              <option>Growing</option>
-              <option>Harvested</option>
-            </select>
+          <div className="mf-form-grid">
+            <div className="mf-field"><label htmlFor="mf-name">Farm name *</label><input id="mf-name" className="mf-input" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. North Field" /></div>
+            <div className="mf-field"><label htmlFor="mf-location">Municipality / Location</label><input id="mf-location" className="mf-input" value={form.municipality} onChange={(e) => setForm({ ...form, municipality: e.target.value })} placeholder="Barangay or municipality" /></div>
+            <div className="mf-field"><label htmlFor="mf-area">Farm area (hectares)</label><input id="mf-area" className="mf-input" type="number" min="0" step="0.01" value={form.area} onChange={(e) => setForm({ ...form, area: e.target.value })} placeholder="e.g. 2.5" /></div>
+            <div className="mf-field"><label htmlFor="mf-variety">Corn variety</label><input id="mf-variety" className="mf-input" value={form.variety} onChange={(e) => setForm({ ...form, variety: e.target.value })} placeholder="e.g. Yellow corn" /></div>
+            <div className="mf-field"><label htmlFor="mf-planting">Planting date</label><input id="mf-planting" className="mf-input" type="date" value={form.plantingDate} onChange={(e) => setForm({ ...form, plantingDate: e.target.value })} /></div>
+            <div className="mf-field"><label htmlFor="mf-harvest">Expected harvest date</label><input id="mf-harvest" className="mf-input" type="date" value={form.harvestDate} onChange={(e) => setForm({ ...form, harvestDate: e.target.value })} /></div>
+            <div className="mf-field"><label htmlFor="mf-status">Current status</label><select id="mf-status" className="mf-input" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}><option>Growing</option><option>Ready to harvest</option><option>Harvested</option><option>Preparing land</option></select></div>
           </div>
+          <div className="mf-form-actions">
+            <button className="mf-secondary" type="button" onClick={() => { setShowForm(false); setEditingId(null); }}>Cancel</button>
+            <button className="mf-primary" type="submit">{editingId ? "Save changes" : "Save farm"}</button>
+          </div>
+        </form>
+      )}
+
+      <div className="mf-toolbar">
+        <div className="mf-search-wrap"><span className="mf-search-icon">⌕</span><input className="mf-input mf-search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by farm, location, variety, or status..." aria-label="Search farms" /></div>
+        <span className="mf-count">Showing {filteredFarms.length} of {farms.length} farm{farms.length === 1 ? "" : "s"}</span>
+      </div>
+
+      {filteredFarms.length === 0 ? (
+        <div className="mf-empty">
+          <div className="mf-empty-icon">{farms.length ? "🔎" : "🌱"}</div>
+          <h2>{farms.length ? "No matching farms" : "Start with your first farm"}</h2>
+          <p>{farms.length ? "Try a different search term to find a farm record." : "Add your farm details to organize crop varieties, field sizes, and harvest dates."}</p>
+          {!farms.length && <button className="mf-primary" type="button" onClick={openAddForm}>＋ Add your first farm</button>}
         </div>
-
-        {filteredFarms.length === 0 ? (
-          <div style={styles.empty}>
-            <div style={{ fontSize: 32, marginBottom: 10 }}>🌱</div>
-            <h3 style={{ color: "#234a35", margin: "0 0 8px" }}>
-              {farms.length === 0 ? "No farms registered yet" : "No matching farm records"}
-            </h3>
-            <p style={{ margin: "0 auto 16px", maxWidth: 420, lineHeight: 1.6 }}>
-              {farms.length === 0
-                ? "Register your first farm to start tracking planting dates and expected harvests."
-                : "Try another search term or change the crop status filter."}
-            </p>
-            {farms.length === 0 && (
-              <button type="button" style={styles.button} onClick={openAddForm}>
-                ＋ Register your first farm
-              </button>
-            )}
-          </div>
-        ) : (
-          <div style={styles.tableWrap}>
-            <table style={styles.table}>
-              <thead>
-                <tr>
-                  <th style={styles.th}>Farm name</th>
-                  <th style={styles.th}>Location</th>
-                  <th style={styles.th}>Area</th>
-                  <th style={styles.th}>Corn variety</th>
-                  <th style={styles.th}>Expected harvest</th>
-                  <th style={styles.th}>Status</th>
-                  <th style={styles.th}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredFarms.map((farm) => (
-                  <tr key={farm.id}>
-                    <td style={{ ...styles.td, color: "#234a35", fontWeight: 750 }}>{farm.name}</td>
-                    <td style={styles.td}>{farm.municipality}</td>
-                    <td style={styles.td}>{farm.area} ha</td>
-                    <td style={styles.td}>{farm.variety}</td>
-                    <td style={styles.td}>{farm.harvestDate}</td>
-                    <td style={styles.td}><span style={styles.badge}>{farm.status}</span></td>
-                    <td style={styles.td}>
-                      <div style={{ display: "flex", gap: 6 }}>
-                        <button type="button" style={styles.secondaryButton} onClick={() => openEditForm(farm)}>Edit</button>
-                        <button type="button" style={styles.dangerButton} onClick={() => deleteFarm(farm)}>Delete</button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
-
-      {notice && (
-        <div role="status" style={{ color: "#245f3b", background: "#eaf5ed", borderRadius: 8, padding: "11px 14px" }}>
-          {notice}
-          <button type="button" onClick={() => setNotice("")} aria-label="Dismiss message" style={{ float: "right", border: 0, background: "transparent", cursor: "pointer" }}>×</button>
+      ) : (
+        <div className="mf-grid">
+          {filteredFarms.map((farm) => (
+            <article className="mf-card" key={farm.id}>
+              <div className="mf-card-banner">
+                <span className="mf-corn-icon">🌽</span>
+                <span className={`mf-badge ${statusClass(farm.status)}`}>{farm.status || "Growing"}</span>
+              </div>
+              <div className="mf-card-content">
+                <h2 className="mf-farm-name">{farm.name}</h2>
+                <div className="mf-location">⌖ {farm.municipality || "Location not specified"}</div>
+                <div className="mf-details">
+                  <div><span className="mf-detail-label">FARM AREA</span><span className="mf-detail-value">{farm.area !== "" && farm.area != null ? `${farm.area} ha` : "Not set"}</span></div>
+                  <div><span className="mf-detail-label">CORN VARIETY</span><span className="mf-detail-value">{farm.variety || "Not set"}</span></div>
+                  <div><span className="mf-detail-label">PLANTING DATE</span><span className="mf-detail-value">{formatDate(farm.plantingDate)}</span></div>
+                  <div><span className="mf-detail-label">HARVEST DATE</span><span className="mf-detail-value">{formatDate(farm.harvestDate)}</span></div>
+                </div>
+              </div>
+              <div className="mf-card-actions">
+                <button className="mf-secondary" type="button" onClick={() => openEditForm(farm)}>Edit</button>
+                <button className="mf-danger" type="button" onClick={() => deleteFarm(farm.id)}>Delete</button>
+              </div>
+            </article>
+          ))}
         </div>
       )}
-     {modalOpen && (
-        <div style={styles.overlay} role="presentation" onMouseDown={(event) => {
-          if (event.target === event.currentTarget) setModalOpen(false);
-        }}>
-          <section style={styles.modal} role="dialog" aria-modal="true" aria-labelledby="farm-form-title">
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", marginBottom: 20 }}>
-              <div>
-                <div style={styles.kicker}>{editingId ? "UPDATE RECORD" : "NEW FARM RECORD"}</div>
-                <h2 id="farm-form-title" style={{ margin: 0, color: "#183b2b" }}>{editingId ? "Edit farm details" : "Register a farm"}</h2>
-              </div>
-              <button type="button" style={styles.secondaryButton} onClick={() => setModalOpen(false)}>Close</button>
-            </div>
-
-            <form onSubmit={handleSubmit}>
-              <div style={styles.formGrid}>
-                <div>
-                  <label style={styles.label} htmlFor="farm-name">Farm name *</label>
-                  <input id="farm-name" name="name" style={styles.input} value={form.name} onChange={updateField} required maxLength={100} placeholder="e.g. Riverside Farm" />
-                </div>
-                <div>
-                  <label style={styles.label} htmlFor="farm-municipality">Municipality / City *</label>
-                  <input id="farm-municipality" name="municipality" style={styles.input} value={form.municipality} onChange={updateField} required maxLength={100} placeholder="e.g. Tuguegarao City" />
-                </div>
-                <div>
-                  <label style={styles.label} htmlFor="farm-area">Farm area (hectares) *</label>
-                  <input id="farm-area" name="area" type="number" min="0.01" step="0.01" style={styles.input} value={form.area} onChange={updateField} required placeholder="e.g. 2.5" />
-                </div>
-                <div>
-                  <label style={styles.label} htmlFor="farm-variety">Corn variety *</label>
-                  <select id="farm-variety" name="variety" style={styles.input} value={form.variety} onChange={updateField} required>
-                    <option>Yellow corn</option>
-                    <option>White corn</option>
-                    <option>Sweet corn</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={styles.label} htmlFor="farm-planting">Planting date *</label>
-                  <input id="farm-planting" name="plantingDate" type="date" style={styles.input} value={form.plantingDate} onChange={updateField} required />
-                </div>
-                <div>
-                  <label style={styles.label} htmlFor="farm-harvest">Expected harvest date *</label>
-                  <input id="farm-harvest" name="harvestDate" type="date" min={form.plantingDate || undefined} style={styles.input} value={form.harvestDate} onChange={updateField} required />
-                </div>
-                <div>
-                  <label style={styles.label} htmlFor="farm-status">Crop status</label>
-                  <select id="farm-status" name="status" style={styles.input} value={form.status} onChange={updateField}>
-                    <option>Planned</option>
-                    <option>Growing</option>
-                    <option>Harvested</option>
-                  </select>
-                </div>
-              </div>
-
-              {formError && <p role="alert" style={{ color: "#a43b30", fontSize: 13, marginTop: 14 }}>{formError}</p>}
-
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 24 }}>
-                <button type="button" style={styles.secondaryButton} onClick={() => setModalOpen(false)}>Cancel</button>
-                <button type="submit" style={styles.button}>{editingId ? "Save changes" : "Register farm"}</button>
-              </div>
-            </form>
-          </section>
-        </div>
-        )}
     </div>
   );
 }

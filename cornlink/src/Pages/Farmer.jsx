@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import "./farmer.css";
 import MyFarms from "./farmer-dashboard/MyFarms";
+import HarvestPlanner from "./farmer-dashboard/HarvestPlanner";
+import SupplyMatching from "./farmer-dashboard/SupplyMatching";
+import MyDeliveries from "./farmer-dashboard/MyDeliveries";
+import QualityRecords from "./farmer-dashboard/QualityRecords";
 
 const navigationItems = [
   { label: "Overview", icon: "▦" },
@@ -122,7 +126,7 @@ export default function Farmer({ onBack }) {
 
   const selectPage = (label) => {
     setActivePage(label);
-    if (label !== "Overview" && label !== "My Farm Records") {
+    if (label !== "Overview" && label !== "My Farm Records" && label !== "My Deliveries" && label !== "Quality Records") {
       showToast(`${label} will be added in a future step.`);
     } else {
       setToast("");
@@ -209,10 +213,21 @@ export default function Farmer({ onBack }) {
             </div>
             <div className="topbar-actions">
               {onBack && (
-                <button type="button" className="back-to-site" onClick={onBack}>
-                  ← Landing page
-                </button>
+                <button
+    type="button"
+    className="back-to-site"
+    onClick={() => {
+      if (onBack) {
+        onBack();
+      } else {
+        window.location.href = "/";
+      }
+    }}
+  >
+    ← Landing page
+  </button>
               )}
+              
               <div className="sync-status"><i />Local preview</div>
               <button
                 type="button"
@@ -231,6 +246,14 @@ export default function Farmer({ onBack }) {
   <Overview onNavigate={selectPage} />
 ) : activePage === "My Farm Records" ? (
   <MyFarms />
+) : activePage === "Harvest Planner" ? (
+  <HarvestPlanner />
+) : activePage === "Supply Matching" ? (
+  <SupplyMatching />
+) : activePage === "My Deliveries" ? (
+  <MyDeliveries />
+) : activePage === "Quality Records" ? (
+  <QualityRecords />
 ) : (
   <ComingSoon title={activePage} />
 )}
