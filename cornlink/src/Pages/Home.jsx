@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Farmer.jsx";
 
 const features = [
   { icon: "🌱", title: "Harvest Forecasting", text: "Keep track of planting schedules and expected harvest dates to build a clearer picture of future corn availability." },
@@ -39,7 +40,7 @@ export default function Home() {
           <a href="#platform" onClick={() => setMenuOpen(false)}>Platform</a>
           <a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a>
           <a href="#stakeholders" onClick={() => setMenuOpen(false)}>Who it's for</a>
-          <a className="nav-cta" href="/dashboard" onClick={e => { e.preventDefault(); setMenuOpen(false); navigate("/dashboard"); }}>Explore CornLink <span>↗</span></a>
+          <a className="nav-cta" href="/dashboard" onClick={e => { e.preventDefault(); setMenuOpen(false); navigate("/farmer"); }}>Farmer <span>↗</span></a>
         </nav>
       </header>
 
