@@ -40,6 +40,8 @@ export default function Home() {
           <a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a>
           <a href="#stakeholders" onClick={() => setMenuOpen(false)}>Who it's for</a>
           <a className="nav-cta" href="/dashboard" onClick={e => { e.preventDefault(); setMenuOpen(false); navigate("/farmer"); }}>Farmer <span>↗</span></a>
+           <a className="nav-cta" href="/plant" onClick={e => { e.preventDefault(); setMenuOpen(false); navigate("/plant"); }}>Plant <span>↗</span></a>
+            <a className="nav-cta" href="/dashboard" onClick={e => { e.preventDefault(); setMenuOpen(false); navigate("/cooperative"); }}>Cooperative <span>↗</span></a>
         </nav>
       </header>
 

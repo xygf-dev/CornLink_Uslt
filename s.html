@@ -1,0 +1,892 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RSBSA Registration Form</title>
+
+<style>
+:root {
+  --green: #246b3b;
+  --light-green: #edf6ef;
+  --border: #d5ddd7;
+  --text: #26332a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f5f3;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+header {
+  background: var(--green);
+  color: white;
+  padding: 25px 20px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0 0 5px;
+  font-size: 25px;
+}
+
+header p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.container {
+  max-width: 1050px;
+  margin: 25px auto;
+  padding: 0 15px;
+}
+
+.notice {
+  background: #fff8df;
+  border: 1px solid #ead99b;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.section {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.section-title {
+  background: var(--light-green);
+  border-bottom: 1px solid var(--border);
+  padding: 13px 18px;
+  color: var(--green);
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.section-body {
+  padding: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field.wide {
+  grid-column: span 2;
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+label {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bdc9bf;
+  border-radius: 5px;
+  font: inherit;
+  font-size: 14px;
+  background: white;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid #9ac9a5;
+  border-color: var(--green);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+}
+
+.choice-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+.choice-list label {
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.parcel {
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 7px;
+  margin-bottom: 15px;
+}
+
+.parcel h3 {
+  margin-top: 0;
+  color: var(--green);
+  font-size: 16px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+button {
+  border: none;
+  border-radius: 5px;
+  padding: 11px 18px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.primary {
+  background: var(--green);
+  color: white;
+}
+
+.secondary {
+  background: #e7eee8;
+  color: var(--green);
+}
+
+.remove {
+  background: #fbe9e7;
+  color: #a12d25;
+  margin-top: 10px;
+}
+
+footer {
+  text-align: center;
+  color: #69736c;
+  font-size: 12px;
+  padding: 10px 0 30px;
+}
+
+.required {
+  color: #b3261e;
+}
+
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field.wide, .field.full {
+    grid-column: auto;
+  }
+
+  .section-body {
+    padding: 14px;
+  }
+}
+
+@media print {
+  body {
+    background: white;
+  }
+
+  header {
+    background: white;
+    color: black;
+    border-bottom: 2px solid black;
+  }
+
+  .notice, .buttons, .remove {
+    display: none;
+  }
+
+  .section {
+    break-inside: avoid;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>RSBSA Registration Form</h1>
+  <p>Registry System for Basic Sectors in Agriculture</p>
+  <p>Sample HTML Prototype — Not an Official DA Form</p>
+</header>
+
+<main class="container">
+
+  <div class="notice">
+    <strong>Prototype notice:</strong>
+    This form is for demonstration and testing only. Do not enter
+    real sensitive personal information. Submission does not register
+    an applicant with the Department of Agriculture.
+  </div>
+
+  <form id="rsbsaForm">
+
+    <!-- PART A -->
+    <section class="section">
+      <div class="section-title">
+        A. Personal Information
+      </div>
+
+      <div class="section-body">
+        <div class="grid">
+
+          <div class="field">
+            <label for="surname">Surname <span class="required">*</span></label>
+            <input id="surname" name="surname" required>
+          </div>
+
+          <div class="field">
+            <label for="firstName">First Name <span class="required">*</span></label>
+            <input id="firstName" name="firstName" required>
+          </div>
+
+          <div class="field">
+            <label for="middleName">Middle Name</label>
+            <input id="middleName" name="middleName">
+          </div>
+
+          <div class="field">
+            <label for="extension">Name Extension</label>
+            <select id="extension" name="extension">
+              <option value="">None</option>
+              <option>Jr.</option>
+              <option>Sr.</option>
+              <option>II</option>
+              <option>III</option>
+              <option>IV</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="birthDate">Date of Birth <span class="required">*</span></label>
+            <input type="date" id="birthDate" name="birthDate" required>
+          </div>
+
+          <div class="field">
+            <label for="birthPlace">Place of Birth</label>
+            <input id="birthPlace" name="birthPlace">
+          </div>
+
+          <div class="field">
+            <label for="sex">Sex <span class="required">*</span></label>
+            <select id="sex" name="sex" required>
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="civilStatus">Civil Status</label>
+            <select id="civilStatus" name="civilStatus">
+              <option value="">Select</option>
+              <option>Single</option>
+              <option>Married</option>
+              <option>Widowed</option>
+              <option>Separated</option>
+              <option>Others</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="education">Highest Educational Attainment</label>
+            <select id="education" name="education">
+              <option value="">Select</option>
+              <option>No formal education</option>
+              <option>Elementary</option>
+              <option>High School</option>
+              <option>Senior High School</option>
+              <option>Vocational</option>
+              <option>College</option>
+              <option>Postgraduate</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="mobile">Mobile Number</label>
+            <input type="tel" id="mobile" name="mobile"
+                   placeholder="09XXXXXXXXX">
+          </div>
+
+          <div class="field">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email">
+          </div>
+
+          <div class="field">
+            <label for="religion">Religion</label>
+            <input id="religion" name="religion">
+          </div>
+
+          <div class="field full">
+            <label for="address">Permanent Address <span class="required">*</span></label>
+            <textarea id="address" name="address" rows="2" required
+              placeholder="House/Street, Barangay, Municipality/City, Province"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="idType">Valid ID Type</label>
+            <select id="idType" name="idType">
+              <option value="">Select</option>
+              <option>PhilID / ePhilID</option>
+              <option>Driver's License</option>
+              <option>Passport</option>
+              <option>Voter's ID / Certification</option>
+              <option>National Government ID</option>
+              <option>Other accepted ID</option>
+            </select>
+          </div>
+
+          <div class="field wide">
+            <label for="idReference">ID Reference Number</label>
+            <input id="idReference" name="idReference"
+                   placeholder="Use fictional data for this prototype">
+          </div>
+
+          <div class="field">
+            <label for="pwd">Person with Disability (PWD)</label>
+            <select id="pwd" name="pwd">
+              <option value="">Select</option>
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="indigenous">Indigenous Cultural Community / IP</label>
+            <select id="indigenous" name="indigenous">
+              <option value="">Select</option>
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="ipCommunity">Community Name, if applicable</label>
+            <input id="ipCommunity" name="ipCommunity">
+          </div>
+
+          <div class="field">
+            <label for="fourPs">4Ps Beneficiary</label>
+            <select id="fourPs" name="fourPs">
+              <option value="">Select</option>
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="association">Association / Cooperative</label>
+            <input id="association" name="association">
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- PART B -->
+    <section class="section">
+      <div class="section-title">
+        B. Agricultural Sector Classification
+      </div>
+
+      <div class="section-body">
+        <div class="field">
+          <label for="sector">Select Sector <span class="required">*</span></label>
+          <select id="sector" name="sector" required>
+            <option value="">Select sector</option>
+            <option value="Farmer">Farmer</option>
+            <option value="Farm Worker">Farm Worker</option>
+            <option value="Fisher">Fisher</option>
+            <option value="Agri-youth">Agri-youth</option>
+          </select>
+        </div>
+
+        <div id="sectorDetails" style="margin-top:18px"></div>
+      </div>
+    </section>
+
+    <!-- PART C -->
+    <section class="section">
+      <div class="section-title">
+        C. Farm Parcel and Commodity Information
+      </div>
+
+      <div class="section-body">
+        <p style="font-size:13px">
+          Add one entry for each farm parcel. Record the commodity
+          and area associated with that parcel.
+        </p>
+
+        <div id="parcels"></div>
+
+        <button type="button" class="secondary" id="addParcel">
+          + Add Farm Parcel
+        </button>
+      </div>
+    </section>
+
+    <!-- PART D -->
+    <section class="section">
+      <div class="section-title">
+        D. Supporting Documents
+      </div>
+
+      <div class="section-body">
+        <div class="grid">
+
+          <div class="field">
+            <label for="identityProof">Proof of Identity</label>
+            <select id="identityProof" name="identityProof">
+              <option value="">Select</option>
+              <option>Government-issued ID</option>
+              <option>Other accepted identification</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="tenureProof">Land Tenure Document</label>
+            <select id="tenureProof" name="tenureProof">
+              <option value="">Select</option>
+              <option>Land Title</option>
+              <option>Tax Declaration</option>
+              <option>CLOA / Land Transfer Document</option>
+              <option>Lease / Tenancy Agreement</option>
+              <option>Other applicable proof</option>
+              <option>Not applicable</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="photoStatus">2×2 Photo</label>
+            <select id="photoStatus" name="photoStatus">
+              <option value="">Select</option>
+              <option>Provided</option>
+              <option>Pending</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label for="remarks">Additional Remarks</label>
+            <textarea id="remarks" name="remarks" rows="3"></textarea>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- PART E -->
+    <section class="section">
+      <div class="section-title">
+        E. Declaration and Consent
+      </div>
+
+      <div class="section-body">
+        <p>
+          I declare that the information provided in this sample
+          registration form is accurate to the best of my knowledge.
+          I understand that an actual RSBSA application is subject
+          to verification by the authorized agricultural office.
+        </p>
+
+        <div class="field">
+          <label>
+            <input type="checkbox" id="declaration" required>
+            I confirm the declaration above.
+            <span class="required">*</span>
+          </label>
+
+          <label>
+            <input type="checkbox" id="privacyConsent" required>
+            I acknowledge the privacy notice for this prototype.
+            <span class="required">*</span>
+          </label>
+        </div>
+
+        <div class="grid" style="margin-top:20px">
+          <div class="field">
+            <label for="applicantName">Applicant's Printed Name</label>
+            <input id="applicantName" name="applicantName" readonly>
+          </div>
+
+          <div class="field">
+            <label for="applicationDate">Application Date</label>
+            <input type="date" id="applicationDate"
+                   name="applicationDate" required>
+          </div>
+
+          <div class="field">
+            <label for="applicationReference">Prototype Reference</label>
+            <input id="applicationReference" readonly>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="buttons">
+      <button type="submit" class="primary">
+        Validate Registration
+      </button>
+
+      <button type="button" class="secondary" id="previewButton">
+        Preview Data
+      </button>
+
+      <button type="reset" class="secondary">
+        Clear Form
+      </button>
+
+      <button type="button" class="secondary" id="printButton">
+        Print Form
+      </button>
+    </div>
+
+    <div id="result" aria-live="polite"></div>
+    <pre id="preview" style="display:none;white-space:pre-wrap;overflow-wrap:anywhere;background:white;padding:15px;border:1px solid #ddd"></pre>
+
+  </form>
+
+  <footer>
+    Demonstration only. No data is transmitted or saved to a server.
+    Not an official RSBSA registration form.
+  </footer>
+</main>
+
+<script>
+const form = document.getElementById("rsbsaForm");
+const parcelsContainer = document.getElementById("parcels");
+const sectorSelect = document.getElementById("sector");
+const sectorDetails = document.getElementById("sectorDetails");
+const result = document.getElementById("result");
+const preview = document.getElementById("preview");
+
+let parcelCount = 0;
+
+function addField(label, name, type = "text", options = []) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "field";
+
+  const lab = document.createElement("label");
+  lab.textContent = label;
+  lab.htmlFor = name;
+
+  let input;
+
+  if (type === "select") {
+    input = document.createElement("select");
+
+    const empty = document.createElement("option");
+    empty.value = "";
+    empty.textContent = "Select";
+    input.appendChild(empty);
+
+    options.forEach(option => {
+      const item = document.createElement("option");
+      item.value = option;
+      item.textContent = option;
+      input.appendChild(item);
+    });
+  } else {
+    input = document.createElement("input");
+    input.type = type;
+  }
+
+  input.id = name;
+  input.name = name;
+  wrapper.append(lab, input);
+
+  return wrapper;
+}
+
+function addParcel() {
+  parcelCount++;
+
+  const parcel = document.createElement("div");
+  parcel.className = "parcel";
+  parcel.dataset.parcel = parcelCount;
+
+  const title = document.createElement("h3");
+  title.textContent = "Farm Parcel " + parcelCount;
+
+  const grid = document.createElement("div");
+  grid.className = "grid";
+
+  const prefix = "parcel" + parcelCount + "_";
+
+  grid.append(
+    addField("Barangay", prefix + "barangay"),
+    addField("Municipality / City", prefix + "municipality"),
+    addField("Province", prefix + "province"),
+    addField("Parcel Area (hectares)", prefix + "area", "number"),
+    addField(
+      "Land Tenure",
+      prefix + "tenure",
+      "select",
+      ["Owner", "Lessee", "Tenant", "Other"]
+    ),
+    addField("Landowner Name, if applicable", prefix + "landowner"),
+    addField(
+      "Farm Type",
+      prefix + "farmType",
+      "select",
+      [
+        "Irrigated",
+        "Rainfed Upland",
+        "Rainfed Lowland",
+        "Urban / Peri-urban",
+        "Other"
+      ]
+    ),
+    addField(
+      "Commodity",
+      prefix + "commodity",
+      "select",
+      [
+        "Palay",
+        "Corn",
+        "Coconut",
+        "High-value Crops",
+        "Livestock",
+        "Poultry",
+        "Fisheries",
+        "Other"
+      ]
+    ),
+    addField("Commodity Area (hectares)", prefix + "commodityArea", "number"),
+    addField("Number of Heads / Trees", prefix + "quantity", "number"),
+    addField("Planting Date / Season", prefix + "plantingDate", "text"),
+    addField(
+      "Organic Agriculture",
+      prefix + "organic",
+      "select",
+      ["Yes", "No"]
+    ),
+    addField(
+      "Within Ancestral Domain",
+      prefix + "ancestral",
+      "select",
+      ["Yes", "No"]
+    ),
+    addField(
+      "Agrarian Reform Beneficiary",
+      prefix + "arb",
+      "select",
+      ["Yes", "No"]
+    )
+  );
+
+  const removeButton = document.createElement("button");
+  removeButton.type = "button";
+  removeButton.className = "remove";
+  removeButton.textContent = "Remove Parcel";
+
+  removeButton.addEventListener("click", () => {
+    parcel.remove();
+    renumberParcels();
+  });
+
+  parcel.append(title, grid, removeButton);
+  parcelsContainer.appendChild(parcel);
+}
+
+function renumberParcels() {
+  [...parcelsContainer.children].forEach((parcel, index) => {
+    parcel.querySelector("h3").textContent =
+      "Farm Parcel " + (index + 1);
+  });
+}
+
+document.getElementById("addParcel").addEventListener("click", addParcel);
+
+sectorSelect.addEventListener("change", () => {
+  sectorDetails.replaceChildren();
+
+  const sector = sectorSelect.value;
+
+  if (!sector) return;
+
+  const grid = document.createElement("div");
+  grid.className = "grid";
+
+  if (sector === "Farmer") {
+    grid.append(
+      addField(
+        "Primary Farming Activity",
+        "farmingActivity",
+        "select",
+        ["Crop Production", "Livestock", "Poultry", "Mixed Farming", "Other"]
+      ),
+      addField("Years in Farming", "yearsFarming", "number")
+    );
+  } else if (sector === "Farm Worker") {
+    grid.append(
+      addField(
+        "Employment Type",
+        "employmentType",
+        "select",
+        ["Permanent", "Seasonal", "Contractual", "Casual", "Other"]
+      ),
+      addField("Farm Owner / Employer", "employer"),
+      addField("Years as Farm Worker", "yearsWorker", "number")
+    );
+  } else if (sector === "Fisher") {
+    grid.append(
+      addField(
+        "Fishing Activity",
+        "fishingActivity",
+        "select",
+        ["Capture Fishing", "Aquaculture", "Fish Processing", "Other"]
+      ),
+      addField("Fishing Location", "fishingLocation")
+    );
+  } else if (sector === "Agri-youth") {
+    grid.append(
+      addField("Agricultural Interest", "agriInterest"),
+      addField(
+        "Current Status",
+        "youthStatus",
+        "select",
+        ["Student", "Young Farmer", "Agripreneur", "Other"]
+      )
+    );
+  }
+
+  sectorDetails.appendChild(grid);
+});
+
+function updateApplicantName() {
+  const parts = [
+    document.getElementById("firstName").value.trim(),
+    document.getElementById("middleName").value.trim(),
+    document.getElementById("surname").value.trim(),
+    document.getElementById("extension").value.trim()
+  ];
+
+  document.getElementById("applicantName").value =
+    parts.filter(Boolean).join(" ");
+}
+
+["firstName", "middleName", "surname", "extension"].forEach(id => {
+  document.getElementById(id).addEventListener("input", updateApplicantName);
+  document.getElementById(id).addEventListener("change", updateApplicantName);
+});
+
+function collectData() {
+  const data = {};
+
+  new FormData(form).forEach((value, key) => {
+    if (!key.startsWith("parcel")) {
+      data[key] = value;
+    }
+  });
+
+  data.parcels = [...parcelsContainer.querySelectorAll(".parcel")].map(
+    parcel => {
+      const parcelData = {};
+
+      parcel.querySelectorAll("input, select, textarea").forEach(input => {
+        parcelData[input.name] = input.value;
+      });
+
+      return parcelData;
+    }
+  );
+
+  data.declarationConfirmed =
+    document.getElementById("declaration").checked;
+
+  data.privacyNoticeAcknowledged =
+    document.getElementById("privacyConsent").checked;
+
+  return data;
+}
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+
+  if (!form.reportValidity()) return;
+
+  const data = collectData();
+
+  if (data.parcels.length === 0) {
+    result.innerHTML =
+      '<p style="color:#a12d25">Add at least one farm parcel.</p>';
+    return;
+  }
+
+  result.innerHTML =
+    '<p style="color:#246b3b;font-weight:bold">' +
+    'Validation passed. This is not official registration.' +
+    '</p>';
+
+  preview.style.display = "block";
+  preview.textContent = JSON.stringify(data, null, 2);
+});
+
+document.getElementById("previewButton").addEventListener("click", () => {
+  preview.style.display =
+    preview.style.display === "none" ? "block" : "none";
+
+  preview.textContent = JSON.stringify(collectData(), null, 2);
+});
+
+document.getElementById("printButton").addEventListener("click", () => {
+  window.print();
+});
+
+form.addEventListener("reset", () => {
+  setTimeout(() => {
+    parcelsContainer.replaceChildren();
+    sectorDetails.replaceChildren();
+    sectorSelect.value = "";
+    parcelCount = 0;
+    result.replaceChildren();
+    preview.style.display = "none";
+    preview.textContent = "";
+    document.getElementById("applicationDate").value =
+      new Date().toISOString().slice(0, 10);
+    document.getElementById("applicationReference").value =
+      "DEMO-" + Date.now().toString().slice(-8);
+  }, 0);
+});
+
+document.getElementById("applicationDate").value =
+  new Date().toISOString().slice(0, 10);
+
+document.getElementById("applicationReference").value =
+  "DEMO-" + Date.now().toString().slice(-8);
+
+// Start with one parcel.
+addParcel();
+</script>
+
+</body>
+</html>
