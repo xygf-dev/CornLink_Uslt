@@ -1,10 +1,15 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./farmer.css";
+import Overview from "./farmer-dashboard/Overview";
 import MyFarms from "./farmer-dashboard/MyFarms";
 import HarvestPlanner from "./farmer-dashboard/HarvestPlanner";
 import SupplyMatching from "./farmer-dashboard/SupplyMatching";
 import MyDeliveries from "./farmer-dashboard/MyDeliveries";
 import QualityRecords from "./farmer-dashboard/QualityRecords";
+import {
+  initialFarms, initialCommitments, initialDeliveries,
+} from "./farmer-dashboard/farmerData";
 
 const navigationItems = [
   { label: "Overview", icon: "▦" },
@@ -15,109 +20,15 @@ const navigationItems = [
   { label: "Quality Records", icon: "✓" },
 ];
 
-function ComingSoon({ title }) {
-  return (
-    <section className="panel" style={{ padding: 28 }}>
-      <div className="section-kicker">FARMER WORKSPACE</div>
-      <h2 style={{ marginTop: 8 }}>{title}</h2>
-      <p style={{ color: "#79857a", lineHeight: 1.7 }}>
-        This section will be built one feature at a time. We will start with My
-        Farm Records, where you can register and manage your own farms.
-      </p>
-    </section>
-  );
-}
-
-function Overview({ onNavigate }) {
-  return (
-    <>
-      <section className="welcome-row">
-        <div>
-          <div className="date-label">CORNLINK FARMER WORKSPACE</div>
-          <h1>
-            Welcome back, Farmer <span aria-hidden="true">🌽</span>
-          </h1>
-          <p>Manage your farms, plan your harvest, and track your corn supply.</p>
-        </div>
-        <button
-          type="button"
-          className="primary-button"
-          onClick={() => onNavigate("My Farm Records")}
-        >
-          <span>＋</span> Manage my farms
-        </button>
-      </section>
-
-      <section className="summary-grid" aria-label="Farmer summary">
-        <article className="summary-card">
-          <div className="summary-top">
-            <span>My registered farms</span>
-            <span className="summary-icon green-icon">⌂</span>
-          </div>
-          <div className="summary-value">—</div>
-          <div className="summary-foot">Your farm records will appear here</div>
-        </article>
-        <article className="summary-card">
-          <div className="summary-top">
-            <span>Upcoming harvest</span>
-            <span className="summary-icon lime-icon">◷</span>
-          </div>
-          <div className="summary-value">—</div>
-          <div className="summary-foot">Based on your planting records</div>
-        </article>
-        <article className="summary-card">
-          <div className="summary-top">
-            <span>Supply commitments</span>
-            <span className="summary-icon gold-icon">⇄</span>
-          </div>
-          <div className="summary-value">—</div>
-          <div className="summary-foot">Confirmed supply commitments</div>
-        </article>
-        <article className="summary-card">
-          <div className="summary-top">
-            <span>Deliveries</span>
-            <span className="summary-icon blue-icon">▤</span>
-          </div>
-          <div className="summary-value">—</div>
-          <div className="summary-foot">Your delivery status at a glance</div>
-        </article>
-      </section>
-
-      <section className="content-grid">
-        <article className="panel" style={{ padding: 24 }}>
-          <div className="section-kicker">GET STARTED</div>
-          <h2 style={{ marginTop: 8 }}>Build your farm profile</h2>
-          <p style={{ color: "#79857a", lineHeight: 1.7 }}>
-            Add your farm details first. CornLink can then help you organize
-            planting dates, expected harvests, supply commitments, and deliveries.
-          </p>
-          <button
-            type="button"
-            className="primary-button"
-            onClick={() => onNavigate("My Farm Records")}
-          >
-            Open My Farm Records <span>→</span>
-          </button>
-        </article>
-
-        <article className="panel activity-panel" style={{ padding: 24 }}>
-        <div className="section-kicker">NEXT STEPS</div>
-        <h2 style={{ marginTop: 8 }}>Your workflow</h2>
-        <ol style={{ color: "#79857a", lineHeight: 2, paddingLeft: 20 }}>
-            <li>Register your farm and planting details.</li>
-            <li>Update your expected harvest date and volume.</li>
-            <li>Review supply matches and delivery updates.</li>
-            <li>View verified quality results when available.</li>
-          </ol>
-        </article>
-      </section>
-    </>
-  );
-}
-
-export default function Farmer({ onBack }) {
+export default function Farmer() {
+  const navigate = useNavigate();
   const [activePage, setActivePage] = useState("Overview");
   const [toast, setToast] = useState("");
+
+  // Shared data: every page reads and updates the same farms, commitments and deliveries
+  const [farms, setFarms] = useState(initialFarms);
+  const [commitments, setCommitments] = useState(initialCommitments);
+  const [deliveries, setDeliveries] = useState(initialDeliveries);
 
   const showToast = (message) => {
     setToast(message);
@@ -126,12 +37,43 @@ export default function Farmer({ onBack }) {
 
   const selectPage = (label) => {
     setActivePage(label);
-    if (label !== "Overview" && label !== "My Farm Records" && label !== "My Deliveries" && label !== "Quality Records") {
-      showToast(`${label} will be added in a future step.`);
-    } else {
-      setToast("");
-    }
+    setToast("");
   };
+
+  const activeDeliveries = deliveries.filter((d) => d.status !== "Delivered").length;
+
+  function renderPage() {
+    switch (activePage) {
+      case "My Farm Records":
+        return <MyFarms farms={farms} setFarms={setFarms} commitments={commitments} notify={showToast} />;
+      case "Harvest Planner":
+        return <HarvestPlanner farms={farms} setFarms={setFarms} commitments={commitments} notify={showToast} />;
+      case "Supply Matching":
+        return (
+          <SupplyMatching
+            farms={farms}
+            commitments={commitments}
+            setCommitments={setCommitments}
+            deliveries={deliveries}
+            notify={showToast}
+          />
+        );
+      case "My Deliveries":
+        return (
+          <MyDeliveries
+            deliveries={deliveries}
+            setDeliveries={setDeliveries}
+            commitments={commitments}
+            farms={farms}
+            notify={showToast}
+          />
+        );
+      case "Quality Records":
+        return <QualityRecords deliveries={deliveries} />;
+      default:
+        return <Overview farms={farms} commitments={commitments} deliveries={deliveries} onNavigate={selectPage} />;
+    }
+  }
 
   return (
     <div className="dashboard-view">
@@ -167,6 +109,7 @@ export default function Farmer({ onBack }) {
               >
                 <span className="nav-icon" aria-hidden="true">{icon}</span>
                 {label}
+                {label === "My Deliveries" && activeDeliveries > 0 && <span className="nav-count">{activeDeliveries}</span>}
               </button>
             ))}
           </nav>
@@ -185,21 +128,14 @@ export default function Farmer({ onBack }) {
               <div className="help-icon">?</div>
               <strong>Need a hand?</strong>
               <p>Get help using your CornLink farmer workspace.</p>
-              <button
-                type="button"
-                onClick={() => showToast("Help and support will be added later.")}
-              >
+              <button type="button" onClick={() => showToast("Help and support will be added later.")}>
                 Help center <span>↗</span>
               </button>
             </div>
             <div className="profile-row">
               <div className="profile-avatar">F</div>
               <div><strong>Farmer Account</strong><small>Farmer</small></div>
-              <button
-                type="button"
-                aria-label="Account options"
-                onClick={() => showToast("Account options will be added later.")}
-              >
+              <button type="button" aria-label="Account options" onClick={() => showToast("Account options will be added later.")}>
                 •••
               </button>
             </div>
@@ -212,22 +148,9 @@ export default function Farmer({ onBack }) {
               Workspace <span>/</span> <strong>{activePage}</strong>
             </div>
             <div className="topbar-actions">
-              {onBack && (
-                <button
-    type="button"
-    className="back-to-site"
-    onClick={() => {
-      if (onBack) {
-        onBack();
-      } else {
-        window.location.href = "/";
-      }
-    }}
-  >
-    ← Landing page
-  </button>
-              )}
-              
+              <button type="button" className="back-to-site" onClick={() => navigate("/")}>
+                ← Landing page
+              </button>
               <div className="sync-status"><i />Local preview</div>
               <button
                 type="button"
@@ -241,35 +164,21 @@ export default function Farmer({ onBack }) {
             </div>
           </header>
 
-        <div className="page-content">
-            {activePage === "Overview" ? (
-  <Overview onNavigate={selectPage} />
-) : activePage === "My Farm Records" ? (
-  <MyFarms />
-) : activePage === "Harvest Planner" ? (
-  <HarvestPlanner />
-) : activePage === "Supply Matching" ? (
-  <SupplyMatching />
-) : activePage === "My Deliveries" ? (
-  <MyDeliveries />
-) : activePage === "Quality Records" ? (
-  <QualityRecords />
-) : (
-  <ComingSoon title={activePage} />
-)}
+          <div className="page-content">
+            {renderPage()}
             <footer className="page-footer">
-                <span>© 2026 CornLink · Connecting harvests to opportunity.</span>
-                <span>Farmer workspace</span>
+              <span>© 2026 CornLink · Connecting harvests to opportunity.</span>
+              <span>Farmer workspace</span>
             </footer>
-            </div>
+          </div>
         </main>
-        </div>
-        {toast && (
-        <div className="toast-message" role="status">
-            <span>✓</span>{toast}
-            </div>
-        )}
-    </div>
-    );
+      </div>
 
+      {toast && (
+        <div className="toast-message" role="status">
+          <span>✓</span>{toast}
+        </div>
+      )}
+    </div>
+  );
 }
